@@ -1,0 +1,252 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<style>
+    /*applico font*/
+    * {
+        
+        font-family: Georgia, serif;
+    }
+    /*evito lo scorrimento*/
+    html{
+        overflow: hidden;
+    }
+
+    body{
+        position: fixed;
+        zoom: 0.7; /*imposto lo zoom di default a 70%*/
+        width:100%;
+        height: 100%;
+        background-image: url("./assets/elementiGioco/sfondoBoscoTenebroso.jpg");
+        padding-bottom: 92px;
+    }
+    @media (min-width:2300px){
+        body{
+            zoom: 1.06; /*Imposto uno zoom maggiore in base alla risoluzione*/
+        }
+    }
+    @media (min-width:1323px) and (max-width:2300px){
+        body{
+            zoom: 0.7; /*Imposto uno zoom maggiore in base alla risoluzione*/
+        }
+    }
+    @media (min-width:1000px) and (max-width:1322px){
+        body{
+            zoom: 0.4; /*Imposto uno zoom maggiore in base alla risoluzione*/
+        }
+    }
+    @media (max-width: 1000px){
+        
+       
+        *:not(#erroreRisoluzione){
+            display:none;
+        } 
+        
+        #erroreRisoluzione{
+            width: 80% !important;
+            margin: auto;
+            font-size: 20px !important;
+            padding: 0px;
+            display: initial;
+            z-index: 999;
+        }
+   } 
+    #playground {
+
+        border: solid 10px;
+        border-image: url("./assets/elementiGioco/wallVert.jpg") round 50;
+        background-image: url("./assets/elementiGioco/pavimento-parquet.png");
+        background-repeat:repeat;
+        background: size 100px;;
+        
+        
+    }
+    button {
+        background-image: url("./assets/elementiGioco/pergPuls.png");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-color: rgba(255,255,255,0);
+        border: solid 0;
+    }
+    #salva{
+        width: 350px;
+        top: 120px;
+        right: 10px;
+        position:fixed;
+    }
+    button{
+        
+        width: 100px;
+        height: 70px;
+        border-radius: 5px;
+        font-size: large;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    button:hover{
+        
+        color: red;
+
+    }
+    aside {
+        color: white;
+        
+        position: fixed; 
+        top: 200px;
+        right: 10px;
+        font-size: x-large;
+        text-align: center;
+        
+    }
+    .chiavi{
+        position: fixed; 
+        top: 300px;
+        right: 40px;
+        font-size: 30px;
+        text-align: center;
+    }
+   #sequenza {
+        position: fixed; 
+        top: 500px;
+        right: 40px;
+        font-size: 30px;
+        text-align: center;
+   }
+   #stop{
+        width: 250px;
+        height: 100px;
+        font-size: xx-large;
+        position: fixed;
+        bottom: 0px;
+        right:0px;
+
+   }
+   #erroreRisoluzione {
+        position:fixed;
+        width: 100%;
+        height: 600px;
+        padding: 150px;
+        text-align: center;
+        font-size: 40px;
+        z-index: -4;
+        background-image: none;
+   }
+
+   /*controllo se il dispositivo è troppo piccolo per giocare*/
+
+   @media (max-width: 1000px){
+        
+       
+        *:not(#erroreRisoluzione){
+            display:none;
+        } 
+        
+        #erroreRisoluzione{
+            width: 100% !important;
+            font-size: 50px !important;
+            display: initial;
+            z-index: 999;
+        }
+   } 
+</style>
+<! -- messaggio che compare se il dispositivo non è supportato -->
+<button id="erroreRisoluzione"> Questo dispositivo non supporta il gioco. Provare con un dispositivo con lo schermo più grande. </button>
+<body>
+<! -- musica di sottofondo -->    
+<audio #musica [src]=audioPath autoplay loop></audio>
+
+<! -- campo di gioco -->
+    <div [style.width.px]="limiteD" [style.height.px]="limiteI"  #playground id="playground" >
+
+    <! -- elementi gioco -->
+
+        <div *ngFor="let item of elementiSchermo" >
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', transform : 'scaleX'+'('+item.verso+')', width : item.width+'px', height : item.height+'px'}" style="z-index: 99" >
+        </div>
+    <! -- muri -->
+        <div *ngFor="let item of muri" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+        </div>
+    <! -- botole piccole per sequnza -->
+        <div *ngFor="let item of botole" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px', display:item.display }" >
+        </div>
+    <! -- botole granti con chiave -->
+        <div *ngFor="let item of botoleChiave" style = "z-index : 2">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px', display:item.display }" >
+        </div>
+    <! -- lampadine -->
+        <div *ngFor="let item of lampadine" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+        </div>
+    <! -- punti interrogativi -->
+        <div *ngFor="let item of puntii" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+        </div>
+    <! -- punti eslamativi -->
+        <div *ngFor="let item of puntie" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+        </div>
+    <! -- fiamme -->
+        <div *ngFor="let item of fiamme" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+        </div>
+    <! -- vite plus -->
+        <div *ngFor="let item of vitePlus" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >   
+        </div>
+    <! -- chiavi -->
+        <div *ngFor="let item of chiavi" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px', display: item.display }" >
+        </div>
+    <! -- pulsanti -->
+        <div *ngFor="let item of pulsanti" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+        </div>
+    <! -- macchie sangue -->
+        <div *ngFor="let item of sangue" style = "z-index : 1">
+            <img [src]="item.path" [ngStyle]=" {position: 'absolute', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px' }" >
+            
+        </div>
+    <! -- pergamena -->
+        <div style = "z-index : 9999">
+            <img [src]="perg.path" [ngStyle]=" {position: 'absolute', top:perg.y+'px', left: perg.x+'px', width : perg.width+'px', height : perg.height+'px', display: perg.display }" >
+            <div [ngStyle]=" {position: 'absolute', top:perg.y+30+'px', left: perg.x+180+'px', width : perg.width-50+'px', height : perg.height+'px',  display: perg.display}">
+                <p style="font-size: 44px; text-align: center; width: 400px;"><b>{{ avviso.title }}<br></b><br>{{avviso.body}}</p>
+            </div>
+           
+        </div>
+<! -- fine campo di gioco -->
+</div>
+    <aside>
+    <! -- hud laterale -->
+        <span *ngFor="let item of vita" class="sidebar-vita">
+            <img [src]="item.path" [ngStyle]=" {margin: '1px', position: 'relative !important', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px'}" >
+        </span>
+    <! -- pulsanti impostazioni gioco -->
+        <button  id="salva" (click)=reset()> Ricomincia </button>
+        <button id="stop" (click)=stopMusica()>{{testoBtnMusica}}</button>
+        <label class="chiavi"><img src="./assets/elementiGioco/chiave.png" width="40px" height="80px"> Chiavi ottenute: {{chiaviPrese}} </label>
+
+
+        <label id="sequenza"> Sequenza: 
+        <span *ngFor="let item of botoleSequenza" class="sidebar-vita">
+            <img [src]="item.path" [ngStyle]=" {margin: '1px', position: 'relative !important', top:item.y+'px', left: item.x+'px', width : item.width+'px', height : item.height+'px'}" >
+        </span>
+        </label>
+    </aside>
+    <button (click)=inizia() id="inizia"  (keydown)=muovi(omino,$event) [ngStyle]="{ position: iniziaPosition, top: iniziaTop+'px', 
+                                                                               right: iniziaRight+'px', width: iniziaW+'px',
+                                                                               height: iniziaH+'px', 
+                                                                               'z-index': '99999',
+                                                                               'font-size': iniziaFsize+'px', 'padding' : iniziaPad+'px', 'margin':'10px'
+                                                                               ,'text-align' : 'center',
+                                                                                'padding-bottom' : iniziaPadBot+'px' }"><div style="width: 60%; margin: auto;">{{titoloBtnInizia}}</div></button>
+    <router-outlet></router-outlet>
+</body>
